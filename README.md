@@ -1,4 +1,4 @@
-## ZenCRC
+# ZenCRC
 
 A command-line tool for CRC32 stuff.
 
@@ -27,7 +27,7 @@ More detailed functionality can be found @ [pipsi github repo](https://github.co
 
 This section will explain all the functions and options available in ZenCRC:
 
-# Basic help:
+### Basic help:
 
     $ zencrc --help
 
@@ -35,7 +35,7 @@ A more concise version of this help can be hound by using the `--help` or `-h`
 option.
 
 
-# Append Mode
+### Append Mode
 
 	$ zencrc -a {file}
     $ zencrc --append {file}
@@ -57,7 +57,7 @@ Currently no functionality exists to change the format in which the CRC
 is appended but will be added in v0.9
 
 
-# Verify Mode
+### Verify Mode
 
 	$ zencrc -v {file}
     $ zencrc --verify {file}
@@ -79,14 +79,14 @@ their name (except some convoluted, yet clever, regex)
 but such funtionality may be added in future versions.
 
 
-# SFV file out:
+### SFV file out:
 
     $ zencrc -s {file_out.sfv} {file(s)}
     $ zencrc --sfv {file_out.sfv} {file(s)}
 
 You can output the calculated checksums to a .sfv file using this option.
 
-# SFV file in / SFV file verify:
+### SFV file in / SFV file verify:
 
     $ zencrc -c {file_out.sfv} {file(s)}
     $ zencrc --check-sfv {file_out.sfv} {file(s)}
@@ -94,7 +94,7 @@ You can output the calculated checksums to a .sfv file using this option.
 You can verify .sfv files using this option.
 
 
-# Recursion
+### Recursion
 
     $ zencrc -r -{a|v|s|c}
 
