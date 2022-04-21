@@ -120,7 +120,5 @@ __This version refers to version "0.9.1.1b1" from this poin onwards__
 -Possibly might switch to click in a future version. Possibly.
 -Small issue when using some arguments together(like -a & -s) will be fixed in next version
 
-### Python 2 support and Cross-platform support
--Currently writen and supports only Python 3 hoping to fix that in the near future
- (I know this a easy and simple thing to do but for now it will remain in Python 3)
+### Cross-platform support
 -Non-critical file structure recursion issues in Windows hoping to fix that soon 
