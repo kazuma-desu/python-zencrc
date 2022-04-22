@@ -23,7 +23,7 @@ This section will explain all the functions and options available in ZenCRC:
 
     zencrc --help
 
-A more concise version of this help can be hound by using the `--help` or `-h`
+A more concise version of this help can be found by using the `--help` or `-h`
 option.
 
 ### Append Mode
