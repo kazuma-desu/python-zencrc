@@ -1,6 +1,6 @@
 # ZenCRC
 
-A command-line tool for CRC32 stuff.
+A command line tool for CRC32 stuff.
 
 ## Installation
 
@@ -19,10 +19,10 @@ Or install from PyPI:
 
     pip install zencrc
 
-`pipsi` is a great alternative to regular pip Mainly because it installs
+`pipsi` is a great alternative to regular pip mainly because it installs
 each package, in an isolated area.
-And it doesn't require sudo or Admin access to work its magic.
-More detailed functionality can be found @ [pipsi github repo](https://github.com/mitsuhiko/pipsi#readme).
+It doesn't require sudo or Admin access to work its magic.
+More detailed functionalities can be found @ [pipsi github repo](https://github.com/mitsuhiko/pipsi#readme).
 
 ## Usage
 
@@ -47,7 +47,7 @@ The CRC will be appended to the end of the file in the following format:
 
     filename.ext --> filename [CRC].ext
 
-So, therefore:
+Therefore:
     $ zencrc -a [LNS]Gin no Saji [720p-BD-AAC].mkv
 
 will return:
@@ -66,14 +66,12 @@ option.
 
 Takes a positional argument {file} or {files} at the end of the command.
 
-This will calculate the CRC32 checksum of a file, check it against the CRC
-in the filename of said file,
-output the status of that file and the CRC that the program calculated.
+This will calculate the CRC32 checksum of the file and check it against the CRC in the filename of the said file, output the status of that file and the CRC that the program calculated.
 
 If the filename does not contain a CRC, the program will still calculate
 and output the CRC32 of that file.
 
-Currently, no functionality exists to check files with a CRC32 in their name but it will be added in a future version.
+Currently, no functionality exists to check files with a CRC32 in their name but it will be added to a future version.
 
 ### SFV file out
 
@@ -93,9 +91,9 @@ You can verify .sfv files using this option.
 
     zencrc -r -{a|v|s|c}
 
-This function ideally would scan directories recursively and apply the
-above-mentioned accordingly, though recursion actually doesn't do anythin
-at this point. Either way, version 0.9 would most definitely have this function.
+This function would ideally scan directories recursively and apply the
+above-mentioned accordingly, though recursion doesn't do anything
+at this point. Either way, version 0.9 will most definitely have this function.
 __Version 0.9b is already in development__
 
 ## Things to expect in the future / Dev notes
@@ -107,21 +105,21 @@ __This version refers to version "0.9.1.1b1" from this point onwards__
 -This is something that I've already been working on since the beginning of this project.
  While it is far from complete it is also definitely coming, so there's that.
 
--Currently in the stage of design.
+-Currently in the design stage.
 
 -Probably will use this CLI tool as the main code base.
 
 ### Better CRC manipulation
 
 -This includes better and more efficient functions to calculate and implement CRC32 checksums.
--Currently in alpha testing with "zlib" to see which is faster(compared to "binascii").
+-Currently in alpha testing with "zlib" to see which is faster (compared to "binascii").
 
 ### Better argument parsing
 
 -This version using argparse works but it also has its quirks, so possible fixes to those.
--Possibly might switch to click in a future version. Possibly.
+-Possibly might switch to click on a future version. Possibly.
 -Small issue when using some arguments together(like -a & -s) will be fixed in the next version
 
 ### Cross-platform support
 
--Non-critical file structure recursion issues in Windows hoping to fix that soon
+-Non-critical file structure recursion issues in Windows, hoping to fix that soon
