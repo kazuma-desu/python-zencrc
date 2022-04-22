@@ -9,20 +9,11 @@ For extended testing, running in a virtualenv might be a good idea.
 
 In the package directory, run:
 
-    pipsi install .
-
-or:
-
     pip install .
 
 Or install from PyPI:
 
     pip install zencrc
-
-`pipsi` is a great alternative to regular pip mainly because it installs
-each package, in an isolated area.
-It doesn't require sudo or Admin access to work its magic.
-More detailed functionalities can be found @ [pipsi github repo](https://github.com/mitsuhiko/pipsi#readme).
 
 ## Usage
 
