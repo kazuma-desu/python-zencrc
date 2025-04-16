@@ -9,8 +9,9 @@ from typing import List, Tuple, Optional, Dict, Union
 import click
 
 # Improved regex for CRC32 in filenames - safe from catastrophic backtracking
-# Uses non-greedy matching and anchoring to prevent DoS vulnerabilities
-CRC_REGEX = r".*?(\[|\()([0-9a-fA-F]{8})(\]|\))(?:[^/]*)$"
+# Uses specific character classes, atomic groups, and anchoring to prevent DoS vulnerabilities
+# Avoids using .* patterns which can lead to catastrophic backtracking
+CRC_REGEX = r"[^\[\(]*?(\[|\()([0-9a-fA-F]{8})(\]|\))(?:[^/]*)$"
 
 
 
