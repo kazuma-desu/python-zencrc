@@ -2,6 +2,13 @@
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=zencrc --cov-report=term --cov-report=html"
+
 [project]
 name = "zencrc"
 version = "0.9.4"
@@ -21,9 +28,24 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Utilities",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 dependencies = [
     "click",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.1.0",
+    "isort>=5.0.0",
+    "mypy>=0.971",
+    "flake8>=5.0.0",
+]
+
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]
 
 [project.urls]
