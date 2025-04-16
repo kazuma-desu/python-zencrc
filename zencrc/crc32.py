@@ -7,14 +7,14 @@ from os.path import splitext
 from datetime import datetime
 
 # Global Var
-crc_regex = r".*(\[|\()([0-f]{8})(\]|\))[^/]*"
+crc_regex = r".*([\[\(])([0-f]{8})([\]\)])[^/]*"
 
 
 class FileObj:
     pass
 
 
-def CRC32_from_file(file):
+def crc32_from_file(file):
     with open(file, 'rb') as temp:
         temp = (binascii.crc32(temp.read()) & 0xFFFFFFFF)
         return "%08X" % temp
@@ -26,7 +26,7 @@ def verify_in_filename(files):
         filename = filename[0:44] + '...'
         filename_crc = re.search(crc_regex, files, re.I)
         filename_crc = str.upper(filename_crc.group(2))
-        current = CRC32_from_file(files)
+        current = crc32_from_file(files)
         if (filename_crc == current):
             status = 'File Ok'
         else:
@@ -36,7 +36,7 @@ def verify_in_filename(files):
                                           current))
     except AttributeError as err:
         status = 'No CRC32 found'
-        current = CRC32_from_file(files)
+        current = crc32_from_file(files)
         print('{:49s} {:20s}{:8s}'.format(filename,
                                           status,
                                           current))
@@ -52,7 +52,7 @@ def append_to_filename(file_in):
                    ': already contains a CRC32 in file name.')
         else:
             print('{} ...'.format(file_in))
-            crc = CRC32_from_file(file_in)
+            crc = crc32_from_file(file_in)
             basename, ext = splitext(file_in)
             os.rename(file_in, '{} [{}]{}'.format(basename, crc, ext))
             print (crc + ' Done')
@@ -71,7 +71,7 @@ def verify_sfv_file(file_in):
                 cur_file = line[0:-9]
                 total_files += 1
                 try:
-                    calc_crc = str.upper(CRC32_from_file(cur_file))
+                    calc_crc = str.upper(crc32_from_file(cur_file))
                     if(calc_crc == crc.upper()):
                         cur_file = cur_file[cur_file.rfind('/') + 1:]
                         print('{}:\nFile OK\n'.format(cur_file))
@@ -105,12 +105,10 @@ def create_sfv_file(sfv_filename, in_files):
 
         buf.write(head)
         for fname in in_files:
-            if(fname[-4:] != '.sfv'):
+            if( not fname.endswith('.sfv')):
                 try:
-                    file_crc = CRC32_from_file(fname)
+                    file_crc = crc32_from_file(fname)
                     buf.write('{} {}\n'.format(fname, file_crc))
                 except IsADirectoryError:
                     pass
-            else:
-                pass
     print('Done')
