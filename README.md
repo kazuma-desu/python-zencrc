@@ -1,11 +1,10 @@
 # ZenCRC
 
-A command line tool for CRC32 stuff.
+A modern command line tool for CRC32 checksums and verification.
 
 ## Installation
 
-This program is packaged as a python package using setuptools and can be installed using `pip` or `pipsi`.
-For extended testing, running in a virtualenv might be a good idea.
+ZenCRC is packaged as a Python package and can be installed using `pip`, `pipx`, or other Python package managers.
 
 In the package directory, run:
 
@@ -38,14 +37,11 @@ The CRC will be appended to the end of the file in the following format:
 
     filename.ext --> filename [CRC].ext
 
-Therefore:
+For example:
     $ zencrc -a [LNS]Gin no Saji [720p-BD-AAC].mkv
 
 will return:
     [LNS]Gin no Saji [720p-BD-AAC] [72A89BC1].mkv
-
-Currently, no functionality exists to change the format in which the CRC
-is appended but will be added in v0.9
 
 ### Verify Mode
 
@@ -82,35 +78,42 @@ You can verify .sfv files using this option.
 
     zencrc -r -{a|v|s|c}
 
-This function would ideally scan directories recursively and apply the
-above-mentioned accordingly, though recursion doesn't do anything
-at this point. Either way, version 0.9 will most definitely have this function.
-__Version 0.9b is already in development__
+This function scans directories recursively and applies the chosen operation to all files within the directory tree. Simply add the `-r` or `--recurse` flag to any command.
 
-## Things to expect in the future / Dev notes
+## New in Version 0.9.4
 
-__This version refers to version "0.9.1.1b1" from this point onwards__
+### Modern Python Packaging
+
+- Migrated to pyproject.toml for modern Python packaging
+- Better dependency management
+- Type hints throughout the codebase
+
+### Improved CLI Experience
+
+- Migrated from argparse to Click for better command-line interface
+- Colorized output for better readability
+- Progress bars for long-running operations
+- Fixed issues when using multiple operations together
+
+### Performance Improvements
+
+- Optimized directory traversal for better performance with large directory trees
+- More efficient file handling
+- Better error handling and reporting
+
+### Cross-Platform Support
+
+- Fixed file structure recursion issues on Windows
+- Better path handling using pathlib
+
+## Future Development
 
 ### A GUI
 
--This is something that I've already been working on since the beginning of this project.
- While it is far from complete it is also definitely coming, so there's that.
+- A graphical interface is planned for a future release
+- Will use this CLI tool as the core engine
 
--Currently in the design stage.
+### Additional File Format Support
 
--Probably will use this CLI tool as the main code base.
-
-### Better CRC manipulation
-
--This includes better and more efficient functions to calculate and implement CRC32 checksums.
--Currently in alpha testing with "zlib" to see which is faster (compared to "binascii").
-
-### Better argument parsing
-
--This version using argparse works but it also has its quirks, so possible fixes to those.
--Possibly might switch to click on a future version. Possibly.
--Small issue when using some arguments together(like -a & -s) will be fixed in the next version
-
-### Cross-platform support
-
--Non-critical file structure recursion issues in Windows, hoping to fix that soon
+- Support for additional checksum formats
+- Better integration with media management tools
