@@ -11,7 +11,8 @@ import click
 # Improved regex for CRC32 in filenames - safe from catastrophic backtracking
 # Uses specific character classes, atomic groups, and anchoring to prevent DoS vulnerabilities
 # Avoids using .* patterns which can lead to catastrophic backtracking
-CRC_REGEX = r"[^\[\(]*?(\[|\()([0-9a-fA-F]{8})(\]|\))(?:[^/]*)$"
+# Using only lowercase hex digits and applying case-insensitive flag when used
+CRC_REGEX = r"[^\[\(]*?([\[\(])([0-9a-f]{8})([\]\)])[^/]*$"
 
 
 
@@ -50,14 +51,15 @@ def get_filename_display(filepath: str, max_length: int = 44) -> str:
 
 
 def extract_crc_from_filename(filepath: str) -> Optional[str]:
-    """Extract CRC32 from a filename if present.
+    """Extract CRC32 from a filename.
     
     Args:
         filepath: Path to the file
         
     Returns:
-        CRC32 string if found, None otherwise
+        CRC32 checksum as a string, or None if not found
     """
+    # Using re.I (IGNORECASE) flag to match both uppercase and lowercase hex digits
     match = re.search(CRC_REGEX, filepath, re.I)
     if not match:
         return None
@@ -157,7 +159,6 @@ def append_to_filename(filepath: str) -> bool:
         new_path = path.with_name(f'{path.stem} [{crc}]{path.suffix}')
         
         os.rename(filepath, new_path)
-        new_name = new_path.name
         click.echo(f'{filename:<40} {size_str:>10} ' + 
                  click.style(f'Added [{crc}]', fg='green'))
         return True
@@ -213,7 +214,7 @@ def verify_sfv_file(sfv_filepath: str) -> Dict[str, int]:
     sfv_name = sfv_path.name
     sfv_size = format_file_size(sfv_path.stat().st_size)
     
-    click.echo(click.style(f"Verifying SFV file: ", bold=True) + 
+    click.echo(click.style("Verifying SFV file: ", bold=True) + 
               click.style(f"{sfv_name}", fg='blue', bold=True) + 
               f" ({sfv_size})")
     click.echo("─" * 80)
@@ -286,7 +287,7 @@ def create_sfv_file(sfv_filepath: str, filepaths: List[str]) -> int:
         Number of files successfully added to the SFV file
     """
     # Print header
-    click.echo(click.style(f'Creating SFV: ', bold=True) + 
+    click.echo(click.style('Creating SFV: ', bold=True) + 
               click.style(f'{sfv_filepath}', fg='blue', bold=True))
     click.echo("─" * 80)
     
@@ -354,7 +355,7 @@ def create_sfv_file(sfv_filepath: str, filepaths: List[str]) -> int:
     # Print summary
     click.echo("─" * 80)
     total_size_str = format_file_size(total_size)
-    click.echo(click.style(f"Summary:", bold=True) + 
+    click.echo(click.style("Summary:", bold=True) + 
               f" Added {click.style(str(added_count), fg='green', bold=True)} files" + 
               (f", Skipped {click.style(str(skipped_count), fg='yellow', bold=True)} files" if skipped_count > 0 else "") + 
               f", Total size: {click.style(total_size_str, bold=True)}")
