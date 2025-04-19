@@ -164,19 +164,20 @@ def process_verify_sfv(filelist: List[str]) -> None:
         click.echo(click.style(str(err), fg='red'))
 
 
-@click.command(help=f'ZenCRC v{__version__}')
-@click.argument('files', nargs=-1, required=True, type=click.Path())
-@click.option('-a', '--append', is_flag=True, help='Append CRC32 to file(s)')
-@click.option('-v', '--verify', is_flag=True, help='Verify CRC32 in file(s)')
-@click.option('-s', '--sfv', type=click.Path(), help='Create a .sfv file')
-@click.option('-c', '--checksfv', is_flag=True, help='Verify a .sfv file')
-@click.option('-r', '--recurse', is_flag=True, help='Run program recursively')
+@click.group()
 def cli(files: Tuple[str, ...], append: bool, verify: bool, sfv: Optional[str],
        checksfv: bool, recurse: bool) -> None:
     """ZenCRC: CRC32 file utility.
 
     A command-line tool for working with CRC32 checksums in filenames and SFV files.
     """
+    pass
+
+@click.command()
+@click.argument('files', nargs=-1, required=True, type=click.Path())
+@click.option('-r', '--recurse', is_flag=True, help='Run program recursively')
+def verify(files: Tuple[str, ...], recurse: bool) -> None:
+    """Verify CRC32 checksums in filenames"""
     filelist = list(files)
 
     if recurse:
@@ -184,22 +185,101 @@ def cli(files: Tuple[str, ...], append: bool, verify: bool, sfv: Optional[str],
 
     filelist = [path for path in filelist if not Path(path).is_dir()]
 
-    if filelist:
-        if verify:
-            process_verify_mode(filelist)
-
-        if append:
-            process_append_mode(filelist)
-
-        if sfv:
-            process_create_sfv(sfv, filelist)
-
-        if checksfv:
-            process_verify_sfv(filelist)
-    else:
+    if not filelist:
         click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
         click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
         click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
+        raise click.Abort()
+    else:
+        process_verify_mode(filelist)
+
+@click.command()
+@click.argument('files', nargs=-1, required=True, type=click.Path())
+@click.option('-r', '--recurse', is_flag=True, help='Run program recursively')
+def append(files: Tuple[str, ...], recurse: bool) -> None:
+    """Append CRC32 checksums to filenames"""
+    filelist = list(files)
+
+    if recurse:
+        filelist = expand_dirs(filelist)
+
+    filelist = [path for path in filelist if not Path(path).is_dir()]
+
+    if not filelist:
+        click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
+        click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
+        click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
+        raise click.Abort()
+    else:
+        process_append_mode(filelist)
+
+def validate_sfv_params(ctx, param, value):
+    """Validate SFV command parameters."""
+    # Get all parameter values from context
+    params = ctx.params
+    files = params.get('files', ())
+    create = params.get('create')
+    verify = params.get('verify')
+    recurse = params.get('recurse')
+
+    # Verify mode validation
+    if verify:
+        if create:
+            raise click.UsageError("Cannot use both --verify and --create")
+        if recurse:
+            raise click.UsageError("--recurse cannot be used with --verify")
+        if files:
+            raise click.UsageError("Additional files cannot be specified with --verify")
+        if not Path(verify).suffix.lower() == '.sfv':
+            raise click.UsageError("--verify requires an .sfv file")
+
+    # Create mode validation
+    if create:
+        if not files:
+            raise click.UsageError("--create requires input files")
+        if not Path(create).suffix.lower() == '.sfv':
+            raise click.UsageError("--create requires an .sfv output file")
+
+    return value
+
+@click.command()
+@click.argument('files', nargs=-1, required=False, type=click.Path(exists=True))
+@click.option('-v', '--verify', type=click.Path(exists=True),
+              help='Verify SFV file',
+              callback=validate_sfv_params)
+@click.option('-c', '--create', type=click.Path(),
+              help='Create SFV file',
+              callback=validate_sfv_params)
+@click.option('-r', '--recurse', is_flag=True,
+              help='Run program recursively (only with --create)')
+def sfv(files: Tuple[str, ...], create: Optional[str], verify: Optional[str], recurse: bool) -> None:
+    """Handle SFV file operations.
+
+    Create or verify SFV files. When creating, input files must be provided.
+    When verifying, only the SFV file is needed.
+
+    Examples:
+    \b
+    Create SFV:  zencrc sfv -c checksums.sfv file1.txt file2.txt
+    Create SFV recursively:  zencrc sfv -c checksums.sfv . -r
+    Verify SFV:  zencrc sfv -v checksums.sfv
+    """
+    try:
+        if verify:
+            process_verify_sfv([verify])
+        elif create:
+            filelist = list(files)
+            if recurse:
+                filelist = expand_dirs(filelist)
+            filelist = [path for path in filelist if not Path(path).is_dir()]
+            if not filelist:
+                click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
+                click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
+                click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
+                raise click.Abort()
+            process_create_sfv(create, filelist)
+    except Exception as e:
+        click.echo(click.style(f"\n❌ Error: {str(e)}", fg='red'), err=True)
         raise click.Abort()
 
 def main() -> None:
