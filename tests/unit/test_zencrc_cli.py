@@ -109,8 +109,8 @@ class TestCliCommands(unittest.TestCase):
         # Set up the mock
         mock_verify.return_value = True
         
-        # Run the command
-        result = self.runner.invoke(cli, ['-v', str(self.test_file)])
+        # Run the command using the new subcommand structure
+        result = self.runner.invoke(cli, ['verify', str(self.test_file)])
         
         # Check that the command ran successfully
         self.assertEqual(result.exit_code, 0)
@@ -124,8 +124,8 @@ class TestCliCommands(unittest.TestCase):
         # Set up the mock
         mock_append.return_value = True
         
-        # Run the command
-        result = self.runner.invoke(cli, ['-a', str(self.test_file)])
+        # Run the command using the new subcommand structure
+        result = self.runner.invoke(cli, ['append', str(self.test_file)])
         
         # Check that the command ran successfully
         self.assertEqual(result.exit_code, 0)
@@ -142,8 +142,8 @@ class TestCliCommands(unittest.TestCase):
         # Create SFV file path
         sfv_file = self.test_dir / "test.sfv"
         
-        # Run the command
-        result = self.runner.invoke(cli, ['-s', str(sfv_file), str(self.test_file)])
+        # Run the command using the new subcommand structure
+        result = self.runner.invoke(cli, ['sfv', '-c', str(sfv_file), str(self.test_file)])
         
         # Check that the command ran successfully
         self.assertEqual(result.exit_code, 0)
@@ -162,8 +162,8 @@ class TestCliCommands(unittest.TestCase):
         with open(sfv_file, "w") as f:
             f.write(f"{self.test_file} {self.expected_crc}\n")
         
-        # Run the command
-        result = self.runner.invoke(cli, ['-c', str(sfv_file)])
+        # Run the command using the new subcommand structure
+        result = self.runner.invoke(cli, ['sfv', '-v', str(sfv_file)])
         
         # Check that the command ran successfully
         self.assertEqual(result.exit_code, 0)
@@ -182,8 +182,8 @@ class TestCliCommands(unittest.TestCase):
         with patch('zencrc.crc32.verify_in_filename') as mock_verify:
             mock_verify.return_value = True
             
-            # Run the command with recurse option
-            result = self.runner.invoke(cli, ['-v', '-r', str(self.test_dir)])
+            # Run the command with recurse option using the new subcommand structure
+            result = self.runner.invoke(cli, ['verify', '-r', str(self.test_dir)])
             
             # Check that the command ran successfully
             self.assertEqual(result.exit_code, 0)
@@ -203,11 +203,13 @@ class TestCliCommands(unittest.TestCase):
             mock_verify.return_value = True
             mock_append.return_value = True
             
-            # Run the command with multiple options
-            result = self.runner.invoke(cli, ['-v', '-a', str(self.test_file)])
+            # Test multiple operations by running commands sequentially
+            verify_result = self.runner.invoke(cli, ['verify', str(self.test_file)])
+            append_result = self.runner.invoke(cli, ['append', str(self.test_file)])
             
-            # Check that the command ran successfully
-            self.assertEqual(result.exit_code, 0)
+            # Check that both commands ran successfully
+            self.assertEqual(verify_result.exit_code, 0)
+            self.assertEqual(append_result.exit_code, 0)
             
             # Check that both functions were called with the correct argument
             mock_verify.assert_called_once_with(str(self.test_file))
