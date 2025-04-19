@@ -15,7 +15,8 @@ version = "0.9.5"
 description = "ZenCRC command-line tool for CRC32 stuff."
 readme = "README.md"
 authors = [{ name = "Kavintha Kulasingham", email = "kmuthisha@gmail.com" }]
-license = { text = "GNU GPLv3" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
