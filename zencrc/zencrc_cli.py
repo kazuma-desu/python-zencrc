@@ -5,6 +5,7 @@ from typing import List, Tuple, Optional, Dict, Union, Iterable
 import click
 from click.types import File
 from zencrc import crc32
+from . import __version__
 
 
 # Output styling functions
@@ -163,7 +164,7 @@ def process_verify_sfv(filelist: List[str]) -> None:
         click.echo(click.style(str(err), fg='red'))
 
 
-@click.command(help='ZenCRC ver 0.9.5')
+@click.command(help=f'ZenCRC v{__version__}')
 @click.argument('files', nargs=-1, required=True, type=click.Path())
 @click.option('-a', '--append', is_flag=True, help='Append CRC32 to file(s)')
 @click.option('-v', '--verify', is_flag=True, help='Verify CRC32 in file(s)')
