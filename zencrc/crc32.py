@@ -115,7 +115,7 @@ def verify_in_filename(filepath: str) -> bool:
 
 
 def format_file_size(size_bytes: int) -> str:
-    """Format file size in human-readable format.
+    """Format file size to human-readable format.
 
     Args:
         size_bytes: Size in bytes
