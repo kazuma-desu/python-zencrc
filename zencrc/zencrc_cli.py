@@ -3,10 +3,9 @@ from pathlib import Path
 from typing import List, Tuple, Optional, Dict, Union, Iterable
 
 import click
-from click.types import File
 from zencrc import crc32
-from . import __version__
-
+from zencrc import __version__
+from zencrc.error_handler import ErrorHandler
 
 # Output styling functions
 def print_header(title: str) -> None:
@@ -165,15 +164,14 @@ def process_verify_sfv(filelist: List[str]) -> None:
 
 
 @click.group()
-def cli(files: Tuple[str, ...], append: bool, verify: bool, sfv: Optional[str],
-       checksfv: bool, recurse: bool) -> None:
+def cli():
     """ZenCRC: CRC32 file utility.
 
     A command-line tool for working with CRC32 checksums in filenames and SFV files.
     """
     pass
 
-@click.command()
+@cli.command()
 @click.argument('files', nargs=-1, required=True, type=click.Path())
 @click.option('-r', '--recurse', is_flag=True, help='Run program recursively')
 def verify(files: Tuple[str, ...], recurse: bool) -> None:
@@ -186,14 +184,11 @@ def verify(files: Tuple[str, ...], recurse: bool) -> None:
     filelist = [path for path in filelist if not Path(path).is_dir()]
 
     if not filelist:
-        click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
-        click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
-        click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
-        raise click.Abort()
+        ErrorHandler.show_no_files_error()
     else:
         process_verify_mode(filelist)
 
-@click.command()
+@cli.command()
 @click.argument('files', nargs=-1, required=True, type=click.Path())
 @click.option('-r', '--recurse', is_flag=True, help='Run program recursively')
 def append(files: Tuple[str, ...], recurse: bool) -> None:
@@ -204,12 +199,10 @@ def append(files: Tuple[str, ...], recurse: bool) -> None:
         filelist = expand_dirs(filelist)
 
     filelist = [path for path in filelist if not Path(path).is_dir()]
+    print(filelist)
 
     if not filelist:
-        click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
-        click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
-        click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
-        raise click.Abort()
+        ErrorHandler.show_no_files_error()
     else:
         process_append_mode(filelist)
 
@@ -225,24 +218,24 @@ def validate_sfv_params(ctx, param, value):
     # Verify mode validation
     if verify:
         if create:
-            raise click.UsageError("Cannot use both --verify and --create")
+            ErrorHandler.verify_create_conflict()
         if recurse:
-            raise click.UsageError("--recurse cannot be used with --verify")
+            ErrorHandler.recurse_with_verify()
         if files:
-            raise click.UsageError("Additional files cannot be specified with --verify")
-        if not Path(verify).suffix.lower() == '.sfv':
-            raise click.UsageError("--verify requires an .sfv file")
+            ErrorHandler.files_with_verify()
+        if Path(verify).suffix.lower() != '.sfv':
+            ErrorHandler.verify_requires_sfv()
 
     # Create mode validation
     if create:
         if not files:
-            raise click.UsageError("--create requires input files")
-        if not Path(create).suffix.lower() == '.sfv':
-            raise click.UsageError("--create requires an .sfv output file")
+            ErrorHandler.create_requires_files()
+        if Path(create).suffix.lower() != '.sfv':
+            ErrorHandler.create_requires_sfv()
 
     return value
 
-@click.command()
+@cli.command()
 @click.argument('files', nargs=-1, required=False, type=click.Path(exists=True))
 @click.option('-v', '--verify', type=click.Path(exists=True),
               help='Verify SFV file',
@@ -273,14 +266,11 @@ def sfv(files: Tuple[str, ...], create: Optional[str], verify: Optional[str], re
                 filelist = expand_dirs(filelist)
             filelist = [path for path in filelist if not Path(path).is_dir()]
             if not filelist:
-                click.echo(click.style("\n❌ Error: No valid files found to process", fg='red'), err=True)
-                click.echo("\nUse " + click.style("-r", fg='green') + " flag to search recursively")
-                click.echo("\nFor more information, run: " + click.style("zencrc --help", fg='blue') + "\n")
-                raise click.Abort()
+                ErrorHandler.show_no_files_error()
             process_create_sfv(create, filelist)
     except Exception as e:
-        click.echo(click.style(f"\n❌ Error: {str(e)}", fg='red'), err=True)
-        raise click.Abort()
+        ErrorHandler.show_error(str(e))
+
 
 def main() -> None:
     """Entry point for the CLI."""
