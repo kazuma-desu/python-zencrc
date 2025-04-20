@@ -77,6 +77,9 @@ jobs:
                   verbose: true
                   print-hash: true
 
+            - name: Clean attestation files
+              run: rm -f dist/*.attestation
+
             - name: Publish to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
               with:
