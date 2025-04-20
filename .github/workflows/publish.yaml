@@ -86,6 +86,9 @@ jobs:
                   verbose: true
                   print-hash: true
 
+            - name: Clean attestation files
+              run: rm -f dist/*.attestation
+
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v1
               env:
