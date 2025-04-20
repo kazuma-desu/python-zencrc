@@ -26,7 +26,7 @@ jobs:
         python -m pip install -e ".[test]"
     - name: Test with pytest
       run: |
-        pytest --cov=zencrc --cov-report=xml
+        pytest --cov=python-zencrc --cov-report=xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
