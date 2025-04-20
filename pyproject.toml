@@ -11,7 +11,7 @@ addopts = "-v --cov=zencrc --cov-report=term --cov-report=html"
 
 [project]
 name = "zencrc"
-version = "0.9.7"
+version = "0.9.8"
 description = "ZenCRC command-line tool for CRC32 stuff."
 readme = "README.md"
 authors = [{ name = "Kavintha Kulasingham", email = "kmuthisha@gmail.com" }]
