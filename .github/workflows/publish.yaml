@@ -36,7 +36,7 @@ jobs:
         needs: [test]
         runs-on: ubuntu-latest
         permissions:
-            contents: read
+            contents: write
             id-token: write # Required for OIDC authentication
 
         steps:
@@ -88,6 +88,8 @@ jobs:
 
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   files: dist/*
                   generate_release_notes: true
