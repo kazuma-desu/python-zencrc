@@ -26,9 +26,16 @@ jobs:
         python -m pip install -e ".[test]"
     - name: Test with pytest
       run: |
-        pytest --cov=python-zencrc --cov-report=xml
+        pytest --cov=python-zencrc --cov-report=xml --junitxml=junit.xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+
         
