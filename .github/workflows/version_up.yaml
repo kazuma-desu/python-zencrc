@@ -1,6 +1,14 @@
 name: Update Version
 
 on:
+    workflow_dispatch:
+        inputs:
+            env:
+                type: choice
+                description: Who to greet
+                options:
+                  - prod
+                  - dev
     pull_request:
         types: [closed]
         branches:
